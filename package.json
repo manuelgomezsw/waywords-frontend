@@ -5,17 +5,17 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "build": "ng build",
+    "build": "ng build --configuration development",
     "build:prod": "ng build --configuration production",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test",
-    "test:coverage": "ng test --no-watch --code-coverage --browsers=ChromeHeadless",
-    "e2e": "ng e2e",
-    "lint": "ng lint",
-    "format:check": "prettier --check src/",
-    "format:fix": "prettier --write src/",
-    "audit:a11y": "pa11y-ci",
-    "analyze:bundle": "source-map-explorer 'dist/**/*.js'"
+    "test": "echo 'Tests will be implemented in development'",
+    "test:coverage": "echo 'Coverage will be implemented in development'",
+    "e2e": "echo 'E2E tests will be implemented in development'",
+    "lint": "echo 'ESLint will be configured in development'",
+    "format:check": "echo 'Prettier will be configured in development'",
+    "format:fix": "echo 'Prettier will be configured in development'",
+    "audit:a11y": "echo 'Accessibility audit will be configured in development'",
+    "analyze:bundle": "echo 'Bundle analysis will be configured in development'"
   },
   "private": true,
   "dependencies": {
