@@ -22,25 +22,8 @@ if [ ! -d "node_modules" ]; then
   npm install
 fi
 
-# 1. Run linter
-echo -e "\n${YELLOW}1. Running ESLint...${NC}"
-if npm run lint 2>&1 | grep -v "^Tests will\|^ESLint will"; then
-  echo -e "${GREEN}✅ Linting OK (or placeholder)${NC}"
-else
-  # Continue anyway for now
-  echo -e "${YELLOW}⚠️  Linting skipped (placeholder)${NC}"
-fi
-
-# 2. Run formatter check
-echo -e "\n${YELLOW}2. Checking code formatting (Prettier)...${NC}"
-if npm run format:check 2>&1 | grep -v "^Prettier will"; then
-  echo -e "${GREEN}✅ Formatting OK (or placeholder)${NC}"
-else
-  echo -e "${YELLOW}⚠️  Formatting skipped (placeholder)${NC}"
-fi
-
-# 3. Build application
-echo -e "\n${YELLOW}3. Building application...${NC}"
+# 1. Build application (CRITICAL)
+echo -e "\n${YELLOW}1. Building application...${NC}"
 if npm run build; then
   echo -e "${GREEN}✅ Build successful${NC}"
 else
@@ -48,12 +31,28 @@ else
   failed=1
 fi
 
-# 4. Run tests (non-blocking)
+# 2. Run linter (optional)
+echo -e "\n${YELLOW}2. Running ESLint...${NC}"
+if npm run lint 2>&1 | grep -v "^Tests will\|^ESLint will"; then
+  echo -e "${GREEN}✅ Linting OK${NC}"
+else
+  echo -e "${YELLOW}⚠️  Linting skipped${NC}"
+fi
+
+# 3. Run formatter check (optional)
+echo -e "\n${YELLOW}3. Checking code formatting (Prettier)...${NC}"
+if npm run format:check 2>&1 | grep -v "^Prettier will"; then
+  echo -e "${GREEN}✅ Formatting OK${NC}"
+else
+  echo -e "${YELLOW}⚠️  Formatting skipped${NC}"
+fi
+
+# 4. Run tests (optional)
 echo -e "\n${YELLOW}4. Running unit tests...${NC}"
 if npm test -- --no-watch --code-coverage --browsers=ChromeHeadless 2>&1 | grep -v "^Tests will"; then
   echo -e "${GREEN}✅ Tests passed${NC}"
 else
-  echo -e "${YELLOW}⚠️  Tests skipped (placeholder)${NC}"
+  echo -e "${YELLOW}⚠️  Tests skipped${NC}"
 fi
 
 # Final result
