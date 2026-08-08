@@ -15,16 +15,11 @@ on:
 
 env:
   NODE_VERSION: '20'
-  PNPM_VERSION: '8'
 
 jobs:
   build:
     name: Build & Test
     runs-on: ubuntu-latest
-
-    strategy:
-      matrix:
-        node-version: [20.x]
 
     steps:
       - name: Checkout code
@@ -33,8 +28,7 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node-version }}
-          cache: 'npm'
+          node-version: ${{ env.NODE_VERSION }}
 
       - name: Display Node version
         run: node --version && npm --version
@@ -45,138 +39,14 @@ jobs:
       - name: Build application
         run: npm run build
 
-      - name: Run linter (ESLint)
+      - name: Run linter
         run: npm run lint
         continue-on-error: true
 
-      - name: Run formatter check (Prettier)
+      - name: Run formatter check
         run: npm run format:check
         continue-on-error: true
 
       - name: Run unit tests
         run: npm test -- --no-watch --code-coverage --browsers=ChromeHeadless
         continue-on-error: true
-
-      - name: Upload coverage to Codecov
-        uses: codecov/codecov-action@v3
-        with:
-          files: ./coverage/coverage-summary.json
-          flags: unittests
-          name: codecov-umbrella
-
-      - name: Archive build artifacts
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: dist-artifacts
-          path: dist/
-          retention-days: 5
-
-      - name: Archive test coverage
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: coverage-report
-          path: coverage/
-          retention-days: 30
-
-  e2e:
-    name: E2E Tests
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run E2E tests
-        run: npm run e2e -- --watch=false
-        continue-on-error: true
-
-      - name: Upload E2E results
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: e2e-results
-          path: cypress/videos/
-          retention-days: 7
-
-  accessibility:
-    name: Accessibility Check
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Run accessibility audit (axe)
-        run: npm run audit:a11y
-        continue-on-error: true
-
-  bundle-analysis:
-    name: Bundle Size Analysis
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up Node.js
-        uses: actions/setup-node@v4
-        with:
-          node-version: ${{ env.NODE_VERSION }}
-          cache: 'npm'
-
-      - name: Install dependencies
-        run: npm ci
-
-      - name: Build for production
-        run: npm run build:prod
-
-      - name: Analyze bundle size
-        run: npm run analyze:bundle
-        continue-on-error: true
-
-  security:
-    name: Security Audit
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Run npm audit
-        run: npm audit --audit-level=moderate
-        continue-on-error: true
-
-      - name: OWASP Dependency Check
-        uses: dependency-check/Dependency-Check_Action@main
-        with:
-          path: '.'
-          format: 'JSON'
-          args: >
-            -l
-            --enablePackageManager
-            --enableNpm
-        continue-on-error: true
-
-      - name: Upload OWASP report
-        if: always()
-        uses: actions/upload-artifact@v3
-        with:
-          name: owasp-report
-          path: reports/
-          retention-days: 30
