@@ -30,11 +30,11 @@ jobs:
         with:
           node-version: ${{ env.NODE_VERSION }}
 
-      - name: Display Node version
+      - name: Display versions
         run: node --version && npm --version
 
       - name: Install dependencies
-        run: npm ci
+        run: npm install --no-save
 
       - name: Build application
         run: npm run build
@@ -48,5 +48,5 @@ jobs:
         continue-on-error: true
 
       - name: Run unit tests
-        run: npm test -- --no-watch --code-coverage --browsers=ChromeHeadless
+        run: npm test
         continue-on-error: true
